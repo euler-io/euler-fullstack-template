@@ -1,6 +1,6 @@
 version: '3.7'
 services:
- euler-search-api-opendistro:
+ backend-dev:
   build:
    context: backend
    dockerfile: development.dockerfile
@@ -12,6 +12,7 @@ services:
   environment:
    - LANG=C.UTF-8
    - LC_ALL=C.UTF-8
+   - CONFIG_FILE=/src/docker-compose-dev/backend.conf
   ports:
    - 8000:8000
   depends_on:
@@ -25,7 +26,7 @@ services:
    - 9200:9200
    - 9600:9600
   volumes:
-   - es-data:/usr/share/elasticsearch/data
+   - {{ cookiecutter.project_slug }}-es-data-dev:/usr/share/elasticsearch/data
    - ./docker-compose-dev/opendistro-config.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/config.yml:ro
    - ./docker-compose-dev/opendistro-internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml:ro
    - ./docker-compose-dev/opendistro-roles.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml:ro
@@ -49,4 +50,4 @@ services:
    - elastic-dev
 
 volumes:
- es-data:
+ {{ cookiecutter.project_slug }}-es-data-dev:

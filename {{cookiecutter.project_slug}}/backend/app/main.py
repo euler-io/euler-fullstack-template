@@ -1,10 +1,16 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from api import router as es_router
+import api
 from elasticsearch.exceptions import AuthenticationException, AuthorizationException
+from config import get_config
 
-app = FastAPI()
-app.include_router(es_router)
+conf = get_config()
+
+app = FastAPI(
+    title=conf.get_string("title"),
+)
+
+app.include_router(api.router)
 
 
 @app.exception_handler(AuthenticationException)

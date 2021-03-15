@@ -1,10 +1,6 @@
 from elasticsearch import Elasticsearch
-
+from config import get_config
 
 def start():
-    return Elasticsearch(
-        ["elastic-dev"],
-        use_ssl=True,
-        ca_certs="/euler/root-ca.pem",
-        ssl_show_warn=False
-    )
+    conf = get_config().get_config("elasticsearch")
+    return Elasticsearch(**conf)
