@@ -15,35 +15,42 @@ generate_certificate() {
 	rm ${OUTPUT}/${predicate}.csr
 }
 
-mkdir -p ${OUTPUT}
+generate() {
 
-echo "##############################################################"
-echo "#                       Generate Root CA                     #"
-echo "##############################################################"
-openssl genrsa -out ${OUTPUT}/root-ca-key.pem 2048
-openssl req -new -x509 -sha256 -key ${OUTPUT}/root-ca-key.pem -days 730 -out ${OUTPUT}/root-ca.pem -subj "/C=AU/ST=Some-State/L=AU/O=Internet Widgits Pty Ltd/OU=IWP/CN=euler-root"
-openssl pkcs12 -export -nokeys -inkey ${OUTPUT}/root-ca-key.pem -in ${OUTPUT}/root-ca.pem -out ${OUTPUT}/root-ca-no-pkey.p12 -passout pass:""
+	echo "##############################################################"
+	echo "#                       Generate Root CA                     #"
+	echo "##############################################################"
+	openssl genrsa -out ${OUTPUT}/root-ca-key.pem 2048
+	openssl req -new -x509 -sha256 -key ${OUTPUT}/root-ca-key.pem -days 730 -out ${OUTPUT}/root-ca.pem -subj "/C=AU/ST=Some-State/L=AU/O=Internet Widgits Pty Ltd/OU=IWP/CN=euler-root"
+	openssl pkcs12 -export -nokeys -inkey ${OUTPUT}/root-ca-key.pem -in ${OUTPUT}/root-ca.pem -out ${OUTPUT}/root-ca-no-pkey.p12 -passout pass:""
 
-echo "##############################################################"
-echo "#                     Generate Admin cert                    #"
-echo "##############################################################"
-generate_certificate admin admin
+	echo "##############################################################"
+	echo "#                     Generate Admin cert                    #"
+	echo "##############################################################"
+	generate_certificate admin admin
 
-echo "##############################################################"
-echo "#           Generate Elasticsearch Elasticsearch dev cert    #"
-echo "##############################################################"
-generate_certificate elastic-dev elastic-dev
+	echo "##############################################################"
+	echo "#           Generate Elasticsearch Elasticsearch dev cert    #"
+	echo "##############################################################"
+	generate_certificate elastic-dev elastic-dev
 
-echo "##############################################################"
-echo "#                     Generate Kibana cert                   #"
-echo "##############################################################"
-generate_certificate kibana kibana
+	echo "##############################################################"
+	echo "#                     Generate Kibana cert                   #"
+	echo "##############################################################"
+	generate_certificate kibana kibana
 
-echo "##############################################################"
-echo "#                    Generate Euler API Cert                 #"
-echo "##############################################################"
-generate_certificate euler euler
+	echo "##############################################################"
+	echo "#                    Generate Euler API Cert                 #"
+	echo "##############################################################"
+	generate_certificate euler euler
 
-rm ${OUTPUT}/root-ca.srl
+	rm ${OUTPUT}/root-ca.srl
 
-echo "Files generated at \"$(readlink -f ${OUTPUT})\"."
+	echo "Files generated at \"$(readlink -f ${OUTPUT})\"."
+
+}
+
+if [ ! -d "$SCRIPT_DIR/docker-compose-dev/dev-certificates" ]; then
+	mkdir -p ${OUTPUT}
+	generate
+fi

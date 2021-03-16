@@ -2,5 +2,7 @@
   "project_name": "Base Project",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
 
-  "domain_main": "{{ cookiecutter.project_slug }}.com"
+  "domain_main": "{{ cookiecutter.project_slug }}.com",
+
+  "security_schema": ["basic", "jwt"]
 }

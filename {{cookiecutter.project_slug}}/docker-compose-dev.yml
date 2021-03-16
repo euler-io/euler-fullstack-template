@@ -18,6 +18,8 @@ services:
   depends_on:
    - elastic-dev
   command: /src/docker-compose-dev/backend-entrypoint.sh
+  depends_on:
+   - generate-certificates
  elastic-dev:
   image: amazon/opendistro-for-elasticsearch:1.9.0
   environment:
@@ -37,6 +39,8 @@ services:
    - ./docker-compose-dev/dev-certificates/elastic-dev.pem:/usr/share/elasticsearch/config/node.pem:ro
    - ./docker-compose-dev/dev-certificates/elastic-dev-key.pem:/usr/share/elasticsearch/config//node-key.pem:ro
    - ./docker-compose-dev/dev-certificates/root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem:ro
+  depends_on:
+   - generate-certificates
  kibana-dev:
   image: amazon/opendistro-for-elasticsearch-kibana:1.9.0
   ports:
@@ -48,6 +52,16 @@ services:
    - ./docker-compose-dev/dev-certificates/root-ca.pem:/usr/share/kibana/config/root-ca.pem:ro
   depends_on:
    - elastic-dev
-
+   - generate-certificates
+ generate-certificates:
+  build:
+   context: docker-compose-dev
+   dockerfile: generate-certificates.dockerfile
+  working_dir: /certificates
+  user: ${CURRENT_UID}:${CURRENT_GID}
+  environment:
+    OUTPUT: /certificates/dev-certificates
+  volumes:
+   - ./docker-compose-dev:/certificates
 volumes:
  {{ cookiecutter.project_slug }}-es-data-dev:
