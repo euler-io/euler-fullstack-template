@@ -2,7 +2,8 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import api
 from elasticsearch.exceptions import AuthenticationException, AuthorizationException
-from config import get_config
+from config.utils import get_config
+import security
 
 conf = get_config()
 
@@ -11,7 +12,7 @@ app = FastAPI(
 )
 
 app.include_router(api.router)
-
+app.include_router(security.router)
 
 @app.exception_handler(AuthenticationException)
 def handle_authentication_exception(request: Request, exc: AuthenticationException):

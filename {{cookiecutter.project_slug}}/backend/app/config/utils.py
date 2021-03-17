@@ -2,7 +2,8 @@ from pyhocon import ConfigFactory
 import os
 import pathlib
 
-current_dir = pathlib.Path(__file__).parent
+CONFIG_ROOT = "{{ cookiecutter.project_slug }}"
+current_dir = pathlib.Path(__file__).parent.parent
 reference_file = current_dir / "reference.conf"
 config_reference = ConfigFactory.parse_file(reference_file)
 
@@ -11,4 +12,4 @@ config = ConfigFactory.parse_file(config_file).with_fallback(config_reference)
 
 
 def get_config():
-    return config.get_config("{{ cookiecutter.project_slug }}")
+    return config.get_config(CONFIG_ROOT)

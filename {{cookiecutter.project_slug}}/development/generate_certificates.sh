@@ -53,4 +53,6 @@ generate() {
 if [ ! -d "${OUTPUT}" ]; then
 	mkdir -p ${OUTPUT}
 	generate
+else
+	echo "Certificates already exists in ${OUTPUT}"
 fi
