@@ -50,7 +50,7 @@ generate() {
 
 }
 
-if [ ! -d "$SCRIPT_DIR/docker-compose-dev/dev-certificates" ]; then
+if [ ! -d "${OUTPUT}" ]; then
 	mkdir -p ${OUTPUT}
 	generate
 fi

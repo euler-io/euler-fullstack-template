@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+ generate-certificates:
+  build:
+   context: development
+   dockerfile: generate-certificates.dockerfile
+  working_dir: /output
+  user: ${CURRENT_UID}:${CURRENT_GID}
+  environment:
+    OUTPUT: /output/certificates
+  volumes:
+   - ./development:/output
