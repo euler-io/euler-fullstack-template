@@ -1,9 +1,14 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from fastapi.responses import JSONResponse
 import api
 from elasticsearch.exceptions import AuthenticationException, AuthorizationException
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 from config.utils import get_config
-import security
+from config import security
+from config.limiter import limiter
+from slowapi.util import get_remote_address
 
 conf = get_config()
 
@@ -13,6 +18,7 @@ app = FastAPI(
 
 app.include_router(api.router)
 app.include_router(security.router)
+
 
 @app.exception_handler(AuthenticationException)
 def handle_authentication_exception(request: Request, exc: AuthenticationException):
@@ -28,3 +34,15 @@ def handle_authorization_exception(request: Request, exc: AuthorizationException
         status_code=403,
         content={"message": "Unauthorized"}
     )
+
+
+def get_limiter_key(
+    request: Request,
+    user_id: str = Depends(security.get_user_identifier)
+):
+    return user_id if user_id else get_remote_address(request)
+
+limiter.key_func = get_limiter_key
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)

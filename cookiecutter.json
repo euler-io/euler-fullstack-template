@@ -4,5 +4,6 @@
 
   "domain_main": "{{ cookiecutter.project_slug }}.com",
 
-  "security_schema": ["basic", "jwt"]
+  "security_schema": ["basic", "jwt"],
+  "api_limits": true
 }

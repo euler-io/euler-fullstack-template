@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse
 from development.loaddata import create_sample_index, load_sample_data
 import logging
 from fastapi_elasticsearch.utils import wait_elasticsearch
-from security import get_auth_header
+from config.security import get_auth_header
 import base64
 from response import ElasticsearchResponse, convert_response
 
@@ -186,7 +186,7 @@ async def search_debug(req: Request,
                                                          description="Starting document offset."),
                        scroll: Optional[str] = Query(None,
                                                      description="Period to retain the search context for scrolling."),
-                       ):
+                       ) -> JSONResponse:
     return router.build_query(
         request=req,
         size=size,

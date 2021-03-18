@@ -5,3 +5,4 @@ pyhocon==0.3.57
 python-jose[cryptography]==3.2.0
 passlib==1.7.4
 python-multipart
+slowapi==0.1.4

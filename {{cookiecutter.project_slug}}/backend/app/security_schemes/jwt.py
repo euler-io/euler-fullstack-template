@@ -1,5 +1,6 @@
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
+from starlette.responses import JSONResponse
 from fastapi.routing import APIRouter
 from jose import JWTError, jwt
 from config.utils import get_config, CONFIG_ROOT
@@ -12,6 +13,7 @@ from opendistro import OpenDistro
 from .basic import auth_header as basic_auth_header
 from fastapi.param_functions import Form
 import base64
+from config.limiter import limiter
 
 security = HTTPBearer(bearerFormat="JWT")
 
@@ -29,7 +31,8 @@ def load_secret_key(jwt_config):
     return base64.b64decode(secret_key).decode("utf-8")
 
 
-jwt_config = get_config().get_config("jwt")
+app_config = get_config()
+jwt_config = app_config.get_config("jwt")
 secret_key = load_secret_key(jwt_config)
 algorithm = jwt_config.get_string("algorithm")
 access_token_expires_minutes = jwt_config.get_int(
@@ -83,12 +86,24 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta]):
     return encoded_jwt
 
 
+def get_user_identifier(credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)):
+    if credentials:
+        return credentials.credentials
+    else:
+        return None
+
+
 router = APIRouter()
+
+rate_limit = app_config.get_string("rate-limits.login")
 
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: UserPasswordForm = Depends(),
-                                 client: OpenDistro = Depends(get_client)):
+@limiter.limit(rate_limit)
+async def login_for_access_token(request: Request,
+                                 form_data: UserPasswordForm = Depends(),
+                                 client: OpenDistro = Depends(get_client)
+                                 ) -> JSONResponse:
     user = authenticate_user(client, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -106,4 +121,7 @@ async def login_for_access_token(form_data: UserPasswordForm = Depends(),
         data=data,
         expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return JSONResponse({
+        "access_token": access_token,
+        "token_type": "bearer"
+    })
