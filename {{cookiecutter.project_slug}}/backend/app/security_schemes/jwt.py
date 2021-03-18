@@ -1,4 +1,4 @@
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi import Depends, HTTPException, status
 from fastapi.routing import APIRouter
 from jose import JWTError, jwt
@@ -13,7 +13,7 @@ from .basic import auth_header as basic_auth_header
 from fastapi.param_functions import Form
 import base64
 
-security = OAuth2PasswordBearer(tokenUrl="token")
+security = HTTPBearer(bearerFormat="JWT")
 
 
 def load_secret_key(jwt_config):
@@ -63,7 +63,8 @@ def authenticate_user(client: OpenDistro, username: str, password: str):
     return client.security.account(headers=basic_auth_header(username, password))
 
 
-def get_auth_header(token: str = Depends(security)):
+def get_auth_header(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
     try:
         payload = jwt.decode(token, secret_key, algorithms=[algorithm])
         username: str = payload.get("sub")
