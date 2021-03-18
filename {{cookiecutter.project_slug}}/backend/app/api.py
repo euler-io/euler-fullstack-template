@@ -9,6 +9,7 @@ import logging
 from fastapi_elasticsearch.utils import wait_elasticsearch
 from security import get_auth_header
 import base64
+from response import ElasticsearchResponse, convert_response
 
 index_name = "sample-data"
 router = ElasticsearchAPIRouter(
@@ -17,7 +18,8 @@ router = ElasticsearchAPIRouter(
 
 es_client = get_client()
 
-auth_header = {"Authorization": "Basic " + base64.b64encode(b"admin:admin").decode('utf-8')}
+auth_header = {"Authorization": "Basic " +
+               base64.b64encode(b"admin:admin").decode('utf-8')}
 
 
 @router.on_event("startup")
@@ -148,7 +150,7 @@ def highlight(q: Optional[str] = Query(None,
     } if q is not None and h else None
 
 
-@router.search_route("/search")
+@router.search_route("/search", response_model=ElasticsearchResponse)
 async def search(req: Request,
                  es_client: Elasticsearch = Depends(get_client),
                  auth_header: Dict = Depends(get_auth_header),
@@ -162,7 +164,7 @@ async def search(req: Request,
                  scroll: Optional[str] = Query(None,
                                                description="Period to retain the search context for scrolling."),
                  ) -> JSONResponse:
-    return router.search(
+    resp = router.search(
         es_client=es_client,
         request=req,
         size=size,
@@ -170,6 +172,7 @@ async def search(req: Request,
         scroll=scroll,
         headers=auth_header
     )
+    return convert_response(resp)
 
 
 @router.search_route("/search/debug")
