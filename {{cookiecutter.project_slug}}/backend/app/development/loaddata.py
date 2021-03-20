@@ -70,3 +70,25 @@ def load_sample_data(es: Elasticsearch, index_name: str, num_docs=10, params=Non
                        headers=headers)
         doc_id = res["_id"]
         print(f"Created with id {doc_id}.")
+
+
+def load_sample_config(es: Elasticsearch, index_name: str, params=None, headers=None):
+    config = {
+        "title": "Sample Search",
+        "config": {
+            "fields": ["search", "mediaType", "page", "rows", "date"],
+            "filters": [
+                {
+                    "type": "text",
+                    "field": "search"
+                }
+            ]
+        }
+    }
+    es.index(index=index_name,
+             doc_type="_doc",
+             id="sample",
+             routing=1,
+             body=config,
+             params=params,
+             headers=headers)

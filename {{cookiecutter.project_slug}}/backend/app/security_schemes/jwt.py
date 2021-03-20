@@ -3,7 +3,7 @@ from fastapi import Depends, HTTPException, status, Request
 from starlette.responses import JSONResponse
 from fastapi.routing import APIRouter
 from jose import JWTError, jwt
-from config.utils import get_config, CONFIG_ROOT
+from config.utils import get_config, load_secret
 from pydantic import BaseModel
 from typing import Optional
 from passlib.context import CryptContext
@@ -19,15 +19,11 @@ security = HTTPBearer(bearerFormat="JWT")
 
 
 def load_secret_key(jwt_config):
-    if "secret-file" in jwt_config:
-        with open(jwt_config.get_string("secret-file"), "r") as f:
-            secret_key = f.read()
-    elif "secret-key" in jwt_config:
-        secret_key = jwt_config.get_string("secret-key")
-    else:
-        raise Exception(
-            f"'{CONFIG_ROOT}.jwt.secret-key' or '{CONFIG_ROOT}.jwt.secret-file' config not found.")
-
+    secret_key = load_secret(
+        jwt_config,
+        "secret-file",
+        "secret-key"
+    )
     return base64.b64decode(secret_key).decode("utf-8")
 
 
@@ -109,7 +105,7 @@ async def login_for_access_token(request: Request,
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+            headers={"Authorization": "Bearer"},
         )
 
     data = {

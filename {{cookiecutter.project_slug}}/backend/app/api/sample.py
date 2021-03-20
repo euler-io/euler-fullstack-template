@@ -4,12 +4,14 @@ from elasticsearch import Elasticsearch
 from fastapi import Request, Query, Depends
 from typing import Optional, Dict
 from starlette.responses import JSONResponse
-from development.loaddata import create_sample_index, load_sample_data
+from development.loaddata import create_sample_index, load_sample_data, load_sample_config
 import logging
 from fastapi_elasticsearch.utils import wait_elasticsearch
 from config.security import get_auth_header
-import base64
+from config.utils import get_config, get_admin_auth_header
 from response import ElasticsearchResponse, convert_response
+
+conf = get_config()
 
 index_name = "sample-data"
 router = ElasticsearchAPIRouter(
@@ -18,8 +20,7 @@ router = ElasticsearchAPIRouter(
 
 es_client = get_client()
 
-auth_header = {"Authorization": "Basic " +
-               base64.b64encode(b"admin:admin").decode('utf-8')}
+auth_header = get_admin_auth_header()
 
 
 @router.on_event("startup")
@@ -29,6 +30,9 @@ async def startup_event():
         logging.info(f"Index {index_name} not found. Creating one.")
         create_sample_index(es_client, index_name, headers=auth_header)
         load_sample_data(es_client, index_name, headers=auth_header)
+    load_sample_config(es_client,
+                       index_name=conf.get_string("search-config-index-name"),
+                       headers=auth_header)
 
 
 @router.on_event("shutdown")
@@ -150,7 +154,7 @@ def highlight(q: Optional[str] = Query(None,
     } if q is not None and h else None
 
 
-@router.search_route("/search", response_model=ElasticsearchResponse)
+@router.search_route("/sample/search", response_model=ElasticsearchResponse)
 async def search(req: Request,
                  es_client: Elasticsearch = Depends(get_client),
                  auth_header: Dict = Depends(get_auth_header),
@@ -175,7 +179,7 @@ async def search(req: Request,
     return convert_response(resp)
 
 
-@router.search_route("/search/debug")
+@router.search_route("/sample/search/debug")
 async def search_debug(req: Request,
                        size: Optional[int] = Query(10,
                                                    le=100,
