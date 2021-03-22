@@ -5,5 +5,5 @@
   "domain_main": "{{ cookiecutter.project_slug }}.com",
 
   "security_schema": ["jwt", "jwt+basic", "basic"],
-  "_copy_without_render": ["**/node_modules"]
+  "_copy_without_render": ["**/node_modules", "*.js"]
 }

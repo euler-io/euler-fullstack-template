@@ -5,9 +5,12 @@ import MomentUtils from "@date-io/moment";
 import { AppLayout } from "euler-search-components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AppMenu from "./AppMenu";
-import SearchPage from "./pages/SearchPage";
+import { SearchPage, LoginPage } from "./pages";
+import AuthService from "./components/auth";
+import PrivateRoute from "./components/PrivateRoute";
 
-function App() {
+const App = () => {
+  const auth = new AuthService();
   return (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Router>
@@ -16,14 +19,17 @@ function App() {
             <Route exact path="/">
               <div>Home</div>
             </Route>
-            <Route exact path="/search/:id">
-              <SearchPage />
+            <Route exact path="/login">
+              <LoginPage />
             </Route>
+            <PrivateRoute auth={auth} exact path="/search/:id">
+              <SearchPage />
+            </PrivateRoute>
           </Switch>
         </AppLayout>
       </Router>
     </MuiPickersUtilsProvider>
   );
-}
+};
 
 export default App;

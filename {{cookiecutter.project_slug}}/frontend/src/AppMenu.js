@@ -10,11 +10,11 @@ const ListItemLink = (props) => {
 const AppMenu = (props) => {
   return (
     <List>
-      <ListItemLink button to="/archiveorg">
+      <ListItemLink button to="/search/sample">
         <ListItemIcon>
           <SearchIcon />
         </ListItemIcon>
-        <ListItemText primary="Archive.org Search" />
+        <ListItemText primary="Search Sample" />
       </ListItemLink>
     </List>
   );
