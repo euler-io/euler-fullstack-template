@@ -8,19 +8,20 @@ import AppMenu from "./AppMenu";
 import { SearchPage, LoginPage } from "./pages";
 import AuthService from "./components/auth";
 import PrivateRoute from "./components/PrivateRoute";
+import config from "./appConfig";
 
 const App = () => {
-  const auth = new AuthService();
+  const auth = new AuthService(config);
   return (
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Router>
-        <AppLayout title="Base Project" menu={<AppMenu />}>
+        <AppLayout title="{{ cookiecutter.project_name }}" menu={<AppMenu />}>
           <Switch>
             <Route exact path="/">
               <div>Home</div>
             </Route>
             <Route exact path="/login">
-              <LoginPage />
+              <LoginPage auth={auth} title="{{ cookiecutter.project_name }} Login" />
             </Route>
             <PrivateRoute auth={auth} exact path="/search/:id">
               <SearchPage />

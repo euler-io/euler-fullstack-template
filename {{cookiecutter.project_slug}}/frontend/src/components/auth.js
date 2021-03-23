@@ -4,9 +4,9 @@ import jwtDecode from "jwt-decode";
 import qs from "querystring";
 
 const defaults = {
-  loginPath: "/login",
+  loginURL: "/login",
   cookiePath: "/",
-  authPath: "/token",
+  authURL: "/token",
 };
 
 class AuthService {
@@ -35,7 +35,7 @@ class AuthService {
             !err.config.__isRetryRequest
           ) {
             this.setSession(null);
-            this.history.push(this.paras.loginPath);
+            this.history.push(this.params.loginURL);
           }
           throw err;
         });
@@ -75,36 +75,41 @@ class AuthService {
     if (access_token) {
       const decoded = jwtDecode(access_token);
       const expires = new Date(decoded.exp * 1000);
-      if (!Cookie.get("jwt_access_token", { path: "/" })) {
+      if (!Cookie.get("jwt_access_token", { path: this.params.cookiePath })) {
         Cookie.set("jwt_access_token", access_token, {
           expires: expires,
-          path: "/",
+          path: this.params.cookiePath,
         });
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
     } else {
-      Cookie.remove("jwt_access_token", { path: "/" });
+      Cookie.remove("jwt_access_token", { path: this.params.cookiePath });
       delete axios.defaults.headers.common["Authorization"];
     }
   };
 
   getAccessToken = () => {
-    return Cookie.get("jwt_access_token", { path: "/" });
+    return Cookie.get("jwt_access_token", { path: this.params.cookiePath });
   };
 
   signInWithUsernameAndPassword = (username, password) => {
     return new Promise((resolve, reject) => {
       axios
         .post(
-          "/token",
+          this.params.authURL,
           qs.stringify({
             username: username,
             password: password,
-          })
+          }),
+          {
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          }
         )
         .then((response) => {
           if (response.data) {
-            const token = response.data.replace("Bearer ", "");
+            const token = response.data.access_token;
             this.setSession(token);
             const decoded = jwtDecode(token);
             resolve(decoded);

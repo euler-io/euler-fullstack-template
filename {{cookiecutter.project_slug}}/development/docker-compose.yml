@@ -32,7 +32,7 @@ services:
    - 3000:3000
   environment:
    PORT: 3000
-   REACT_APP_BASE_URL: "http://localhost:8000"
+   REACT_APP_BASE_API_URL: "http://localhost:8000"
    WORKING_DIR: "/src/frontend"
  elastic-dev:
   image: amazon/opendistro-for-elasticsearch:1.9.0

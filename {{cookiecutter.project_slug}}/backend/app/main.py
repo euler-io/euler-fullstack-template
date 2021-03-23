@@ -9,6 +9,7 @@ from config.utils import get_config
 from config import security
 from config.limiter import limiter
 from slowapi.util import get_remote_address
+from fastapi.middleware.cors import CORSMiddleware
 
 conf = get_config()
 
@@ -46,3 +47,14 @@ limiter.key_func = get_limiter_key
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+
+origins = conf.get_list("cors-allowed-origins")
+
+if len(origins) > 0:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )

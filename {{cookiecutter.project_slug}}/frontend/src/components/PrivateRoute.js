@@ -13,20 +13,19 @@ const PrivateRoute = ({ component: Component, auth, children, ...rest }) => {
     if (location.search) {
       next = `${location.pathname}${location.search}`;
     }
-    return (
-      <Redirect
-        to={{
-          pathname: auth.params.loginPath,
-          search: `?${qs.stringify({ next })}`,
-          state: { referrer: next },
-        }}
-      />
-    );
+    const state = { referrer: next };
+    const search = `?${qs.stringify({ next })}`;
+    const to = {
+      pathname: auth.params.loginURL,
+      search: search,
+      state: state,
+    };
+    return <Redirect to={to} />;
   }
 };
 
 PrivateRoute.propTypes = {
-  component: PropTypes.node,
+  component: PropTypes.elementType,
   auth: PropTypes.objectOf(AuthService).isRequired,
 };
 
