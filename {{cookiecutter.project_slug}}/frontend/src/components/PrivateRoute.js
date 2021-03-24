@@ -26,7 +26,7 @@ const PrivateRoute = ({ component: Component, auth, children, ...rest }) => {
 
 PrivateRoute.propTypes = {
   component: PropTypes.elementType,
-  auth: PropTypes.objectOf(AuthService).isRequired,
+  auth: PropTypes.instanceOf(AuthService).isRequired,
 };
 
 PrivateRoute.defaultProps = {

@@ -141,7 +141,7 @@ const LoginPage = (props) => {
 
 LoginPage.propTypes = {
   title: PropTypes.string,
-  auth: PropTypes.objectOf(AuthService).isRequired,
+  auth: PropTypes.instanceOf(AuthService).isRequired,
 };
 
 LoginPage.defaultProps = {
