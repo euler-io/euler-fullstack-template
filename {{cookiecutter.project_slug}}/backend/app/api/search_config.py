@@ -11,29 +11,22 @@ from starlette.responses import JSONResponse
 from config.security import get_auth_header
 
 
+conf = get_config()
+index_name = conf.get_string("search-config.index-name")
+index_mappings = conf.get_config("search-config.index-mappings")
+
 def create_index(es: Elasticsearch, index_name: str, params=None, headers=None):
     return es.indices.create(
         index=index_name,
         ignore=400,
         body={
-            "mappings": {
-                "properties": {
-                    "title": {
-                        "type": "keyword"
-                    },
-                    "config": {
-                        "type": "object"
-                    }
-                }
-            }
+            "mappings": index_mappings
         },
         params=params,
         headers=headers
     )
 
 
-conf = get_config()
-index_name = conf.get_string("search-config-index-name")
 router = ElasticsearchAPIRouter(
     index_name=index_name
 )

@@ -79,7 +79,7 @@ class AuthService {
         Cookie.set("jwt_access_token", access_token, {
           expires: expires,
           path: this.params.cookiePath,
-          SameSite: "Strict",
+          SameSite: "Lax",
         });
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;

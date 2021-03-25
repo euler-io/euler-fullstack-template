@@ -18,6 +18,7 @@ const theme = createMuiTheme();
 
 const App = () => {
   const auth = new AuthService(config);
+  auth.init();
   return (
     <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={MomentUtils}>

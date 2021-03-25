@@ -31,7 +31,7 @@ async def startup_event():
         create_sample_index(es_client, index_name, headers=auth_header)
         load_sample_data(es_client, index_name, headers=auth_header)
     load_sample_config(es_client,
-                       index_name=conf.get_string("search-config-index-name"),
+                       index_name=conf.get_string("search-config.index-name"),
                        headers=auth_header)
 
 
@@ -162,9 +162,9 @@ async def search(req: Request,
                                              le=100,
                                              alias="s",
                                              description="Defines the number of hits to return."),
-                 start_from: Optional[int] = Query(0,
-                                                   alias="f",
-                                                   description="Starting document offset."),
+                 page: Optional[int] = Query(0,
+                                             alias="p",
+                                             description="The page number (zero-based)."),
                  scroll: Optional[str] = Query(None,
                                                description="Period to retain the search context for scrolling."),
                  ) -> JSONResponse:
@@ -172,7 +172,7 @@ async def search(req: Request,
         es_client=es_client,
         request=req,
         size=size,
-        start_from=start_from,
+        start_from=(size * page),
         scroll=scroll,
         headers=auth_header
     )

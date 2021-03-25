@@ -75,15 +75,22 @@ def load_sample_data(es: Elasticsearch, index_name: str, num_docs=10, params=Non
 def load_sample_config(es: Elasticsearch, index_name: str, params=None, headers=None):
     config = {
         "title": "Sample Search",
-        "config": {
-            "fields": ["search", "mediaType", "page", "rows", "date"],
-            "filters": [
-                {
-                    "type": "text",
-                    "field": "search"
-                }
-            ]
+        "url": "/sample/search",
+        "method": "GET",
+        "fields": ["q", "p", "rows", "h"],
+        "mandatory-fields": ["q"],
+        "filters": [
+            {
+                "type": "text",
+                "field": "q"
+            }
+        ],
+        "default-values": {
+            "p": 0,
+            "rows": 10,
+            "h": True
         }
+
     }
     es.index(index=index_name,
              doc_type="_doc",
