@@ -7,4 +7,4 @@ RUN apk add --update openssl bash && \
 
 COPY generate_certificates.sh /
 
-ENTRYPOINT ["bash", "/generate_certificates.sh"]
+CMD sed 's/\r$//' '/generate_certificates.sh' | bash
