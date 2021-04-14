@@ -4,21 +4,16 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
-  Slide,
   Typography,
 } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { withStyles } from "@material-ui/core/styles";
 import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
 import create from "zustand";
-import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import AuthService from "../components/auth";
 import { useHistory, useLocation } from "react-router-dom";
 import qs from "querystring";
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 const useStore = create((set) => ({
   username: "",
@@ -83,7 +78,6 @@ const LoginPage = (props) => {
       <Dialog
         open={true}
         aria-labelledby="login-title"
-        TransitionComponent={Transition}
       >
         <DialogContent>
           <div className={classes.loginForm}>

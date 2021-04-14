@@ -2,6 +2,5 @@
   "project_name": "Base Project",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
 
-  "security_schema": ["jwt", "jwt+basic", "basic"],
   "_copy_without_render": ["**/node_modules"]
 }

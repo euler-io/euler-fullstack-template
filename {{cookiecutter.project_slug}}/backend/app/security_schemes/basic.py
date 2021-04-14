@@ -1,9 +1,10 @@
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi import Depends
-from typing import Optional
 import base64
-from fastapi.routing import APIRouter
 import hashlib
+from typing import Optional
+
+from fastapi import Depends
+from fastapi.routing import APIRouter
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from slowapi.util import get_remote_address
 
 security = HTTPBasic()

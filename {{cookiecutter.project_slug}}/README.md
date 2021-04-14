@@ -13,3 +13,9 @@ After the logs stopped rolling the following must be running:
 * FastAPI redocs at http://localhost:8000/redoc
 * Elasticsearch at https://localhost:9200 (User/Pass: admin/admin with self-signed certificate)
 * Kibana at http://localhost:5601 (User/Pass: admin/admin)
+* Search UI at http://localhost:3000 (User/Pass: admin/admin)
+
+## Requirements
+
+* Docker
+* docker-compose

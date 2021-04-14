@@ -1,6 +1,6 @@
-from slowapi import Limiter
 from config.utils import get_config
-from fastapi import Request, Depends
+from fastapi import Depends, Request
+from slowapi import Limiter
 from slowapi.util import get_remote_address
 
 conf = get_config()

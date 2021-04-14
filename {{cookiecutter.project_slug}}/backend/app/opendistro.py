@@ -1,6 +1,5 @@
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, Transport
 from elasticsearch.client.utils import NamespacedClient, _make_path
-from elasticsearch import Transport
 
 
 class SecurityClient(NamespacedClient):

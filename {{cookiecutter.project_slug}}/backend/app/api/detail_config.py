@@ -5,17 +5,15 @@ from client import get_client
 from config.security import get_auth_header
 from config.utils import get_admin_auth_header, get_config
 from elasticsearch import Elasticsearch
-from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Path
 from fastapi_elasticsearch import ElasticsearchAPIQueryBuilder
 from fastapi_elasticsearch.utils import wait_elasticsearch
-from pydantic import BaseModel
-from response import (ElasticsearchHitBaseModel, ElasticsearchModelConverter,
-                      ElasticsearchResponseModel)
+from response import ElasticsearchHitBaseModel, ElasticsearchModelConverter
 from starlette.responses import JSONResponse
 
 conf = get_config()
-index_name = conf.get_string("search-config.index-name")
-index_mappings = conf.get_config("search-config.index-mappings")
+index_name = conf.get_string("detail-config.index-name")
+index_mappings = conf.get_config("detail-config.index-mappings")
 
 
 def create_index(es: Elasticsearch, index_name: str, params=None, headers=None):
@@ -31,7 +29,6 @@ def create_index(es: Elasticsearch, index_name: str, params=None, headers=None):
 
 
 es_client = get_client()
-
 
 router = APIRouter()
 
@@ -50,7 +47,7 @@ query_builder = ElasticsearchAPIQueryBuilder(size=1, start_from=0)
 
 @query_builder.filter()
 def filter_config(id: str = Path(None,
-                                 description="Id of the search configuration.")):
+                                 description="Id of the detail configuration.")):
     return {
         "ids": {
             "values": [id]
@@ -58,15 +55,16 @@ def filter_config(id: str = Path(None,
     }
 
 
-class SearchConfigModel(ElasticsearchHitBaseModel):
+class DetailConfigModel(ElasticsearchHitBaseModel):
     title: str
+    type: str
     config: dict
 
 
-converter = ElasticsearchModelConverter(SearchConfigModel)
+converter = ElasticsearchModelConverter(DetailConfigModel)
 
 
-@router.get("/config/{id}", response_model=SearchConfigModel)
+@router.get("/detail/{id}", response_model=DetailConfigModel)
 async def get_config_by_id(query_body: Dict = Depends(query_builder.build()),
                            es_client: Elasticsearch = Depends(get_client),
                            auth_header: Dict = Depends(get_auth_header)

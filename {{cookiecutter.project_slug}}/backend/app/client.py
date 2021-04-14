@@ -1,5 +1,6 @@
-from start_client import start
 import logging
+
+from start_client import start
 
 client = start()
 

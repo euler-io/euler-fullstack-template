@@ -1,1 +1,2 @@
-from security_schemes.{{ cookiecutter.security_schema }} import router, get_user_identifier, get_auth_header, security
+from security_schemes.jwt import (get_auth_header, get_user_identifier, router,
+                                  security)

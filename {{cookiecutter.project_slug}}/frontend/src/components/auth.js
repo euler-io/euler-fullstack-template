@@ -1,7 +1,7 @@
 import axios from "axios";
-import Cookie from "js-cookie";
+import Cookies from "universal-cookie";
 import jwtDecode from "jwt-decode";
-import qs from "querystring";
+import qs from "qs";
 
 const defaults = {
   loginURL: "/login",
@@ -9,10 +9,13 @@ const defaults = {
   authURL: "/token",
 };
 
+const COOKIE = "jwt_access_token";
+
 class AuthService {
   constructor(history, params = {}) {
     this.history = history;
     this.params = { ...defaults, ...params };
+    this.cookies = new Cookies();
   }
 
   init() {
@@ -75,22 +78,22 @@ class AuthService {
     if (access_token) {
       const decoded = jwtDecode(access_token);
       const expires = new Date(decoded.exp * 1000);
-      if (!Cookie.get("jwt_access_token", { path: this.params.cookiePath })) {
-        Cookie.set("jwt_access_token", access_token, {
+      if (!this.cookies.get(COOKIE, { path: this.params.cookiePath })) {
+        this.cookies.set(COOKIE, access_token, {
           expires: expires,
           path: this.params.cookiePath,
-          SameSite: "Lax",
+          SameSite: "lax",
         });
       }
       axios.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
     } else {
-      Cookie.remove("jwt_access_token", { path: this.params.cookiePath });
+      this.cookies.remove(COOKIE, { path: this.params.cookiePath });
       delete axios.defaults.headers.common["Authorization"];
     }
   };
 
   getAccessToken = () => {
-    return Cookie.get("jwt_access_token", { path: this.params.cookiePath });
+    return this.cookies.get(COOKIE, { path: this.params.cookiePath });
   };
 
   signInWithUsernameAndPassword = (username, password) => {
@@ -122,6 +125,14 @@ class AuthService {
           reject(error.toString());
         });
     });
+  };
+
+  addSessionListener = (func) => {
+    this.cookies.addChangeListener(func);
+  };
+
+  removeSessionListener = (func) => {
+    this.cookies.removeChangeListener(func);
   };
 }
 

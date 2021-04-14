@@ -2,7 +2,8 @@
 
 ## How to use it
 
-Go to the directory where you want to create your project and run:
+1. Install cookie-cutter.
+1. Go to the directory where you want to create your project and run:
 
 ```bash
 pip install cookiecutter

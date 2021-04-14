@@ -1,19 +1,21 @@
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException, status, Request
-from starlette.responses import JSONResponse
-from fastapi.routing import APIRouter
-from jose import JWTError, jwt
-from config.utils import get_config, load_secret
-from pydantic import BaseModel
-from typing import Optional
-from passlib.context import CryptContext
-from datetime import datetime, timedelta
-from client import get_client
-from opendistro import OpenDistro
-from .basic import auth_header as basic_auth_header
-from fastapi.param_functions import Form
 import base64
+from datetime import datetime, timedelta
+from typing import Optional
+
+from client import get_client
 from config.limiter import limiter
+from config.utils import get_config, load_secret
+from fastapi import Depends, HTTPException, Request, status
+from fastapi.param_functions import Form
+from fastapi.routing import APIRouter
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
+from opendistro import OpenDistro
+from passlib.context import CryptContext
+from pydantic import BaseModel
+from starlette.responses import JSONResponse
+
+from .basic import auth_header as basic_auth_header
 
 security = HTTPBearer(bearerFormat="JWT")
 
