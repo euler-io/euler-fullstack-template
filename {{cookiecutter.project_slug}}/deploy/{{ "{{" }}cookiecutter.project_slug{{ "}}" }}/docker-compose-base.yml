@@ -1,0 +1,175 @@
+{% raw %}
+version: '3.7'
+services:
+ proxy:
+  image: nginx:1.19-alpine
+  ports:
+   - 80:80
+   - 443:443
+  secrets:
+   - source: root-ca.pem
+     target: /etc/nginx/certs/root-ca.pem
+     mode: 0400
+   - source: frontend-key.pem
+     target: /etc/nginx/certs/frontend-key.pem
+     mode: 0400
+   - source: frontend.pem
+     target: /etc/nginx/certs/frontend.pem
+     mode: 0400
+   - source: dhparam.pem
+     target: /etc/nginx/certs/dhparam.pem
+     mode: 0400
+   - source: nginx_proxy.conf
+     target: /etc/nginx/conf.d/default.conf
+     mode: 0400
+  networks:
+   - frontend
+  depends_on:
+   - admin-ui
+   - search-ui
+   - admin-api
+   - search-api
+   - kibana
+ search-ui:
+  image: '{{ cookiecutter.docker_image_search_ui }}'
+  environment:
+   REACT_APP_BASE_URL: "{{ cookiecutter.public_url }}/search/app"
+   REACT_APP_BASE_API_URL: "{{ cookiecutter.public_url }}/search/api"
+   REACT_APP_AUTH_URL: "/token"
+   REACT_APP_LOGIN_URL: "/login"
+   PUBLIC_URL: "{{ cookiecutter.public_url }}/search/app"
+   SERVER_NAME: search-ui
+  secrets:
+   - source: root-ca.pem
+     target: /etc/nginx/certs/root-ca.pem
+     mode: 0400
+   - source: search-ui-key.pem
+     target: /etc/nginx/certs/ui-key.pem
+     mode: 0400
+   - source: search-ui.pem
+     target: /etc/nginx/certs/ui.pem
+     mode: 0400
+   - source: dhparam.pem
+     target: /etc/nginx/certs/dhparam.pem
+     mode: 0400
+   - source: nginx_ui.conf
+     target: /app/nginx.conf
+     mode: 0400
+  networks:
+   - frontend
+ search-api:
+  image: '{{ cookiecutter.docker_image_search_api }}'
+  depends_on:{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+   - elastic-{{ i }}
+{% endfor %}
+  environment:
+   - CONFIG_FILE=/app/search-api.conf
+  networks:
+   - frontend
+   - backend
+ kibana:
+  image: amazon/opendistro-for-elasticsearch-kibana:1.9.0
+  environment:
+   ELASTICSEARCH_URL: https://elastic-1:9200
+  secrets:
+   - source: root-ca.pem
+     target: /usr/share/kibana/config/certs/ca/root-ca.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: kibana-key.pem
+     target: /usr/share/kibana/config/certs/kibana/kibana-key.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: kibana.pem
+     target: /usr/share/kibana/config/certs/kibana/kibana.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: kibana.yml
+     target: /usr/share/kibana/config/kibana.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+  networks:
+   - frontend
+   - backend
+  depends_on:{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+   - elastic-{{ i }}
+{% endfor %}
+{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+ elastic-{{ i }}:
+  image: amazon/opendistro-for-elasticsearch:1.9.0
+  environment:
+   - cluster.name={{cookiecutter.project_slug}}-cluster
+   - node.name=elastic-{{ i }}
+{%- set comma = joiner(",") %}
+   - discovery.seed_hosts={% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}{{ comma() }}elastic-{{ i }}{% endfor %}
+{%- set comma = joiner(",") %}
+   - cluster.initial_master_nodes={% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}{{ comma() }}elastic-{{ i }}{% endfor %}
+   - bootstrap.memory_lock=false
+   - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  ulimits:
+   memlock:
+    soft: -1
+    hard: -1
+   nofile:
+    soft: 65536
+    hard: 65536
+  secrets:
+   - source: root-ca.pem
+     target: /usr/share/elasticsearch/config/certs/ca/root-ca.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: node{{ i }}.pem
+     target: /usr/share/elasticsearch/config/certs/elasticsearch/node.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: node{{ i }}-key.pem
+     target: /usr/share/elasticsearch/config/certs/elasticsearch/node-key.pem
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: opendistro-roles_mapping.yml
+     target: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles_mapping.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: opendistro-config.yml
+     target: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/config.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: opendistro-roles.yml
+     target: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: opendistro-internal_users.yml
+     target: /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+   - source: elasticsearch.yml
+     target: /usr/share/elasticsearch/config/elasticsearch.yml
+     mode: 0400
+     uid: '1000'
+     gid: '1000'
+  volumes:
+   - esdata-{{ i }}:/usr/share/elasticsearch/data
+  healthcheck:
+   test: curl --cacert /usr/share/elasticsearch/config/certs/ca/root-ca.pem -s https://elastic-{{ i }}:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+   interval: 30s
+   timeout: 10s
+   retries: 5
+  networks:
+   - backend
+{% endfor %}
+
+networks:
+ frontend:
+ backend:
+{% endraw %}

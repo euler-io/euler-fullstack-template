@@ -2,5 +2,5 @@
   "project_name": "Base Project",
   "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '-') }}",
 
-  "_copy_without_render": ["**/node_modules"]
+  "_copy_without_render": ["deploy/{{ cookiecutter.project_slug }}/docker-compose.yml"]
 }
