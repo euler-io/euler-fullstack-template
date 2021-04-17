@@ -6,12 +6,21 @@
   "public_url": "https://localhost",
   "server_name": "localhost",
   "elastic_nodes": 3,
+ 
   "docker_image_search_api": "{{ cookiecutter.project_slug }}-search-api:latest",
   "docker_image_search_ui": "{{ cookiecutter.project_slug }}-search-ui:latest",
+ 
   "generate_deploy_certificates": [true, false],
   "certificates_country": "AU",
   "certificates_estate": "Some-Estate",
   "certificates_locality": "AU",
   "certificates_organization": "Internet Widgits Pty Ltd",
-  "certificates_organizational_unit": "IWP"
+  "certificates_organizational_unit": "IWP",
+
+  "jwt_secret": "random",
+
+  "_extensions": [
+    "jinja2_base64_filters.Base64Filters",
+    "cookiecutter.extensions.RandomStringExtension"
+  ]
 }
