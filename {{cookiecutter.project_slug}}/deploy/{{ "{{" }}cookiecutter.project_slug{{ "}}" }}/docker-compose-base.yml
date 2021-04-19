@@ -1,3 +1,5 @@
+# docker-compose -d -f docker-compose.yml up
+# docker stack deploy -c docker-compose.yml {{ cookiecutter.project_slug }}
 {% raw %}
 version: '3.7'
 services:
@@ -25,9 +27,7 @@ services:
   networks:
    - frontend
   depends_on:
-   - admin-ui
    - search-ui
-   - admin-api
    - search-api
    - kibana
  search-ui:
@@ -38,7 +38,7 @@ services:
    REACT_APP_AUTH_URL: "/token"
    REACT_APP_LOGIN_URL: "/login"
    PUBLIC_URL: "{{ cookiecutter.public_url }}/search/app"
-   SERVER_NAME: search-ui
+   SERVER_NAME: {{ cookiecutter.server_name }}
   secrets:
    - source: root-ca.pem
      target: /etc/nginx/certs/root-ca.pem
@@ -167,6 +167,64 @@ services:
    retries: 5
   networks:
    - backend
+{% endfor %}
+
+secrets:
+ nginx_proxy.conf:
+  file: ./config/nginx_proxy.conf
+ nginx_ui.conf:
+  file: ./config/nginx_ui.conf
+ admin.conf:
+  file: ./config/admin.conf
+ search.conf:
+  file: ./config/search.conf
+ opendistro-roles_mapping.yml:
+  file: ./config/opendistro-roles_mapping.yml
+ opendistro-config.yml:
+  file: ./config/opendistro-config.yml
+ opendistro-roles.yml:
+  file: ./config/opendistro-roles.yml
+ opendistro-internal_users.yml:
+  file: ./config/opendistro-internal_users.yml
+ root-ca.pem:
+  file: ./certificates/root-ca.pem
+ kibana.yml:
+  file: ./config/kibana.yml
+ kibana-key.pem:
+  file: ./certificates/kibana-key.pem
+ kibana.pem:
+  file: ./certificates/kibana.pem
+ elasticsearch.yml:
+  file: ./config/elasticsearch.yml
+ frontend.pem:
+  file: ./certificates/frontend.pem
+ frontend-key.pem:
+  file: ./certificates/frontend-key.pem
+ search-ui.pem:
+  file: ./certificates/search-ui.pem
+ search-ui-key.pem:
+  file: ./certificates/search-ui-key.pem
+ admin-ui.pem:
+  file: ./certificates/admin-ui.pem
+ admin-ui-key.pem:
+  file: ./certificates/admin-ui-key.pem
+ admin-api.p12:
+  file: ./certificates/admin-api.p12
+ search-api.p12:
+  file: ./certificates/search-api.p12
+ dhparam.pem:
+  file: ./certificates/dhparam.pem
+{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+ node{{ i }}-key.pem:
+  file: ./certificates/node{{ i }}-key.pem
+ node{{ i }}.pem:
+  file: ./certificates/node{{ i }}.pem
+{% endfor %}
+
+volumes:
+{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+ esdata-{{ i }}:
+  external: true
 {% endfor %}
 
 networks:

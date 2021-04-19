@@ -127,7 +127,7 @@ config:
           type: jwt
           challenge: false
           config:
-            signing_key: "{% if cookiecutter.jwt_secret != "random" %}{{ cookiecutter.jwt_secret | b64encode }}{% else %}{{ random_ascii_string(128) | b64encode }}{% endif %}"
+            signing_key: "{{ cookiecutter.jwt_secret | b64encode }}"
             jwt_header: "Authorization"
             jwt_url_parameter: null
             roles_key: "roles" 

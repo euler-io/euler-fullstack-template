@@ -11,6 +11,7 @@
   "docker_image_search_ui": "{{ cookiecutter.project_slug }}-search-ui:latest",
  
   "generate_deploy_certificates": [true, false],
+  "certificates_expiration_in_days": 365,
   "certificates_country": "AU",
   "certificates_estate": "Some-Estate",
   "certificates_locality": "AU",
@@ -19,8 +20,13 @@
 
   "jwt_secret": "random",
 
+  "admin_password": "changethis",
+  "apiadmin_password": "changethis",
+  "kibana_password": "changethis",
+
   "_extensions": [
     "jinja2_base64_filters.Base64Filters",
-    "cookiecutter.extensions.RandomStringExtension"
+    "cookiecutter.extensions.RandomStringExtension",
+    "bcrypt_jinja.BCryptExtension"
   ]
 }

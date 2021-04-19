@@ -11,7 +11,7 @@ generate_certificate() {
 	openssl genrsa -out ${OUTPUT}/certificates/$predicate-key-temp.pem -rand ${OUTPUT}/certificates/.rnd 4096
 	openssl pkcs8 -inform PEM -outform PEM -in ${OUTPUT}/certificates/$predicate-key-temp.pem -topk8 -nocrypt -v1 PBE-SHA1-3DES -out ${OUTPUT}/certificates/${predicate}-key.pem
 	openssl req -new -key ${OUTPUT}/certificates/${predicate}-key.pem -out ${OUTPUT}/certificates/${predicate}.csr -subj "${CERTIFICATE_ATTRIBUTES}/CN=${fqdn}"
-	openssl x509 -req -in ${OUTPUT}/certificates/${predicate}.csr -CA ${OUTPUT}/certificates/root-ca.pem -CAkey ${OUTPUT}/certificates/root-ca-key.pem -CAcreateserial -sha256 -days 730 -out ${OUTPUT}/certificates/${predicate}.pem
+	openssl x509 -req -in ${OUTPUT}/certificates/${predicate}.csr -CA ${OUTPUT}/certificates/root-ca.pem -CAkey ${OUTPUT}/certificates/root-ca-key.pem -CAcreateserial -sha256 -days {{ cookiecutter.certificates_expiration_in_days | int }} -out ${OUTPUT}/certificates/${predicate}.pem
 
     openssl pkcs12 -export -out ${OUTPUT}/certificates/${predicate}.p12 -inkey ${OUTPUT}/certificates/${predicate}-key.pem -in ${OUTPUT}/certificates/${predicate}.pem -passout pass:""
 	rm ${OUTPUT}/certificates/${predicate}-key-temp.pem
@@ -29,7 +29,7 @@ if [ "true" = "{{ cookiecutter.generate_deploy_certificates | lower }}" ]; then
     mkdir -p ${OUTPUT}/certificates
     openssl rand -writerand ${OUTPUT}/certificates/.rnd
     openssl genrsa -out ${OUTPUT}/certificates/root-ca-key.pem -rand ${OUTPUT}/certificates/.rnd 4096
-    openssl req -new -x509 -sha256 -key ${OUTPUT}/certificates/root-ca-key.pem -days 730 -out ${OUTPUT}/certificates/root-ca.pem -subj "${CERTIFICATE_ATTRIBUTES}/CN={{ cookiecutter.project_slug }}-root"
+    openssl req -new -x509 -sha256 -key ${OUTPUT}/certificates/root-ca-key.pem -days {{ cookiecutter.certificates_expiration_in_days | int }} -out ${OUTPUT}/certificates/root-ca.pem -subj "${CERTIFICATE_ATTRIBUTES}/CN={{ cookiecutter.project_slug }}-root"
     openssl pkcs12 -export -nokeys -inkey ${OUTPUT}/certificates/root-ca-key.pem -in ${OUTPUT}/certificates/root-ca.pem -out ${OUTPUT}/certificates/root-ca-no-pkey.p12 -passout pass:""
 
     echo "##############################################################"
@@ -73,7 +73,7 @@ if [ "true" = "{{ cookiecutter.generate_deploy_certificates | lower }}" ]; then
 
     rm -rf ${OUTPUT}/certificates/.rnd
 
-    echo "Files generated at \"$(readlink -f ${OUTPUT}/certificates)\"."
+    echo "Certificates generated at \"$(readlink -f ${OUTPUT}/certificates)\"."
 fi
 
 exit 0

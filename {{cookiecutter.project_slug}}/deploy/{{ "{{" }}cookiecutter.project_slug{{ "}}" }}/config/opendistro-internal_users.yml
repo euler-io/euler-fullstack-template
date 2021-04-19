@@ -10,22 +10,21 @@ _meta:
 # Define your internal users here
 
 admin:
-  hash: "{{ ADMIN_PWD_HASH }}"
+  hash: "{{ cookiecutter.admin_password | bcrypt }}"
   reserved: true
   backend_roles:
   - "admin"
   description: "Admin user"
 
-{{ cookiecutter.project_slug }}-admin:
-  hash: "{{ IPED_ADMIN_PWD_HASH }}"
+apiadmin:
+  hash: "{{ cookiecutter.apiadmin_password | bcrypt }}"
   reserved: true
   backend_roles:
-  - "iped-admin"
-  - "iped-search"
-  description: "Iped admin user"
+  - "api-admin"
+  description: "API admin user"
 
 kibanaserver:
-  hash: "{{ KIBANA_SERVER_PWD_HASH }}"
+  hash: "{{ cookiecutter.kibana_password | bcrypt }}"
   reserved: true
   description: "Kibanaserver user"
 
