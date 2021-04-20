@@ -1,4 +1,4 @@
-# docker-compose -d -f docker-compose.yml up
+# docker-compose -f docker-compose.yml up
 # docker stack deploy -c docker-compose.yml {{ cookiecutter.project_slug }}
 {% raw %}
 version: '3.7'
@@ -31,7 +31,7 @@ services:
    - search-api
    - kibana
  search-ui:
-  image: '{{ cookiecutter.docker_image_search_ui }}'
+  image: {{ cookiecutter.docker_image_search_ui }}
   environment:
    REACT_APP_BASE_URL: "{{ cookiecutter.public_url }}/search/app"
    REACT_APP_BASE_API_URL: "{{ cookiecutter.public_url }}/search/api"
@@ -58,12 +58,28 @@ services:
   networks:
    - frontend
  search-api:
-  image: '{{ cookiecutter.docker_image_search_api }}'
+  image: {{ cookiecutter.docker_image_search_api }}
   depends_on:{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
    - elastic-{{ i }}
 {% endfor %}
   environment:
-   - CONFIG_FILE=/app/search-api.conf
+   - CONFIG_FILE=/app/search.conf
+  secrets:
+   - source: search.conf
+     target: /app/search.conf
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: search-api.p12
+     target: /app/certs/cert.p12
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: root-ca.pem
+     target: /app/certs/root-ca.pem
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
   networks:
    - frontend
    - backend
@@ -110,6 +126,7 @@ services:
    - cluster.initial_master_nodes={% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}{{ comma() }}elastic-{{ i }}{% endfor %}
    - bootstrap.memory_lock=false
    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+   - DISABLE_INSTALL_DEMO_CONFIG=true
   ulimits:
    memlock:
     soft: -1
@@ -224,7 +241,6 @@ secrets:
 volumes:
 {% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
  esdata-{{ i }}:
-  external: true
 {% endfor %}
 
 networks:

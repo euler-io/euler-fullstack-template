@@ -17,6 +17,7 @@
   "certificates_locality": "AU",
   "certificates_organization": "Internet Widgits Pty Ltd",
   "certificates_organizational_unit": "IWP",
+  "certificates_bits_length": "4096",
 
   "jwt_secret": "random",
 

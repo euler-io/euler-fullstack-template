@@ -45,6 +45,7 @@ api-admin:
     - index_patterns:
       - "search-config"
       - "detail-config"
+      - "sample-data"
       allowed_actions:
         - indices_all
         - "indices:data/read/scroll/clear"

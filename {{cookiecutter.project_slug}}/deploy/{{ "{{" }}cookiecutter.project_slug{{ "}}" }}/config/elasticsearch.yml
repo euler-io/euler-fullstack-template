@@ -101,11 +101,11 @@ opendistro_security.ssl.http.pemtrustedcas_filepath: /usr/share/elasticsearch/co
 opendistro_security.allow_unsafe_democertificates: false
 opendistro_security.allow_default_init_securityindex: true
 opendistro_security.authcz.admin_dn:
-  - 'CN=admin-prod,O={{cookiecutter.certificates_organization}},ST={{cookiecutter.certificates_estate}},C={{cookiecutter.certificates_country}},L={{cookiecutter.certificates_locality}}'
+  - 'CN=admin-prod,OU={{cookiecutter.certificates_organizational_unit}},O={{cookiecutter.certificates_organization}},ST={{cookiecutter.certificates_estate}},C={{cookiecutter.certificates_country}},L={{cookiecutter.certificates_locality}}'
 
 opendistro_security.nodes_dn:
 {% for i in range(1, nodes + 1) %}
-  - 'CN=elastic-{{ i }},O={{cookiecutter.certificates_organization}},L={{cookiecutter.certificates_locality}},ST={{cookiecutter.certificates_estate}},C={{cookiecutter.certificates_country}}'
+  - 'CN=elastic-{{ i }},OU={{cookiecutter.certificates_organizational_unit}},O={{cookiecutter.certificates_organization}},L={{cookiecutter.certificates_locality}},ST={{cookiecutter.certificates_estate}},C={{cookiecutter.certificates_country}}'
 {% endfor %}
 
 opendistro_security.audit.type: internal_elasticsearch

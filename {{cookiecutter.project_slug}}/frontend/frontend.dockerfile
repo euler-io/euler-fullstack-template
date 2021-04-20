@@ -1,3 +1,10 @@
+FROM node:current-alpine AS builder
+
+WORKDIR /src
+COPY * /src
+RUN yarn install \
+	&& yarn build
+
 FROM nginx:1.19-alpine
 
 ENV REACT_APP_BASE_URL="http://localhost"
@@ -8,7 +15,7 @@ ENV PUBLIC_URL="http://localhost"
 ENV SERVER_NAME="localhost"
 
 WORKDIR /app
-COPY ./build /app 
+COPY --from=builder /src/build /app 
 COPY ./nginx.conf /app
 
 EXPOSE 80
