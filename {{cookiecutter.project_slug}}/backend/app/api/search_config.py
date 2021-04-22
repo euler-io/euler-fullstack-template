@@ -2,12 +2,12 @@ import logging
 from typing import Dict
 
 from client import get_client
+from start_client import start
 from config.security import get_auth_header
 from config.utils import get_admin_auth_header, get_config
 from elasticsearch import Elasticsearch
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from fastapi_elasticsearch import ElasticsearchAPIQueryBuilder
-from fastapi_elasticsearch.utils import wait_elasticsearch
 from pydantic import BaseModel
 from response import (ElasticsearchHitBaseModel, ElasticsearchModelConverter,
                       ElasticsearchResponseModel)
@@ -30,19 +30,18 @@ def create_index(es: Elasticsearch, index_name: str, params=None, headers=None):
     )
 
 
-es_client = get_client()
-
-
 router = APIRouter()
 
 
-@router.on_event("startup")
-def startup_event():
+def start_up():
     auth_header = get_admin_auth_header()
-    wait_elasticsearch(es_client, headers=auth_header)
-    if not es_client.indices.exists(index_name, headers=auth_header):
-        logging.info(f"Index {index_name} not found. Creating one.")
-        create_index(es_client, index_name, headers=auth_header)
+    try:
+        su_client = start()
+        if not su_client.indices.exists(index_name, headers=auth_header):
+            logging.info(f"Index {index_name} not found. Creating one.")
+            create_index(su_client, index_name, headers=auth_header)
+    finally:
+        su_client.close()
 
 
 query_builder = ElasticsearchAPIQueryBuilder(size=1, start_from=0)

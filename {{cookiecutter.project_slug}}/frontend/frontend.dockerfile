@@ -1,9 +1,14 @@
 FROM node:current-alpine AS builder
 
+COPY . /src/
 WORKDIR /src
-COPY * /src
-RUN yarn install \
-	&& yarn build
+RUN yarn install
+RUN REACT_APP_BASE_URL=__REACT_APP_BASE_URL_VAR__ \
+	REACT_APP_BASE_API_URL=__REACT_APP_BASE_API_URL_VAR__ \
+	REACT_APP_AUTH_URL=__REACT_APP_AUTH_URL_VAR__ \
+	REACT_APP_LOGIN_URL=__REACT_APP_LOGIN_URL_VAR__ \
+	PUBLIC_URL=__PUBLIC_URL_VAR__ \
+	yarn build
 
 FROM nginx:1.19-alpine
 
@@ -15,7 +20,7 @@ ENV PUBLIC_URL="http://localhost"
 ENV SERVER_NAME="localhost"
 
 WORKDIR /app
-COPY --from=builder /src/build /app 
+COPY --from=builder /src/build /app/
 COPY ./nginx.conf /app
 
 EXPOSE 80

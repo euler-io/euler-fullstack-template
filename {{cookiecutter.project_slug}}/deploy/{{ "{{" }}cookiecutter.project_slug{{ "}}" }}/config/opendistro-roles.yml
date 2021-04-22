@@ -51,6 +51,7 @@ api-admin:
         - "indices:data/read/scroll/clear"
   cluster_permissions:
     - "cluster:monitor/main"
+    - "cluster:monitor/health"
 
 # Search master role
 search_master:

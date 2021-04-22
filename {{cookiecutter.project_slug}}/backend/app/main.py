@@ -1,4 +1,5 @@
 import api
+from client import get_client
 from config import security
 from config.limiter import limiter
 from config.utils import get_config
@@ -14,12 +15,23 @@ from slowapi.util import get_remote_address
 
 conf = get_config()
 
+base_url = conf.get_string("base-url")
+
 app = FastAPI(
     title=conf.get_string("title"),
+    openapi_url=f"{base_url}/openapi.json",
+    docs_url=f"{base_url}/docs",
+    redoc_url=f"{base_url}/redoc"
 )
 
 app.include_router(api.router)
 app.include_router(security.router)
+
+
+@app.on_event("shutdown")
+def shutdown_event():
+    es_client = get_client()
+    es_client.close()
 
 
 @app.exception_handler(AuthenticationException)
@@ -43,6 +55,7 @@ def get_limiter_key(
     user_id: str = Depends(security.get_user_identifier)
 ):
     return user_id if user_id else get_remote_address(request)
+
 
 limiter.key_func = get_limiter_key
 app.state.limiter = limiter

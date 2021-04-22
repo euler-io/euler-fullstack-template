@@ -64,9 +64,21 @@ services:
 {% endfor %}
   environment:
    - CONFIG_FILE=/app/search.conf
+   - GUNICORN_CMD_ARGS=--keyfile=/app/certs/cert-key.pem --certfile=/app/certs/cert.pem
+   - PORT=443
   secrets:
    - source: search.conf
      target: /app/search.conf
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: search-api-key.pem
+     target: /app/certs/cert-key.pem
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: search-api.pem
+     target: /app/certs/cert.pem
      mode: 0400
      uid: '1100'
      gid: '1100'
@@ -191,8 +203,6 @@ secrets:
   file: ./config/nginx_proxy.conf
  nginx_ui.conf:
   file: ./config/nginx_ui.conf
- admin.conf:
-  file: ./config/admin.conf
  search.conf:
   file: ./config/search.conf
  opendistro-roles_mapping.yml:
@@ -221,14 +231,12 @@ secrets:
   file: ./certificates/search-ui.pem
  search-ui-key.pem:
   file: ./certificates/search-ui-key.pem
- admin-ui.pem:
-  file: ./certificates/admin-ui.pem
- admin-ui-key.pem:
-  file: ./certificates/admin-ui-key.pem
- admin-api.p12:
-  file: ./certificates/admin-api.p12
  search-api.p12:
   file: ./certificates/search-api.p12
+ search-api.pem:
+  file: ./certificates/search-api.pem
+ search-api-key.pem:
+  file: ./certificates/search-api-key.pem
  dhparam.pem:
   file: ./certificates/dhparam.pem
 {% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}

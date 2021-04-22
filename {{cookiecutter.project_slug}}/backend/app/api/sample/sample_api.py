@@ -4,40 +4,22 @@ from typing import Dict, List, Optional
 from client import get_client
 from config.security import get_auth_header
 from config.utils import get_admin_auth_header, get_config
-from .loaddata import (create_sample_index, load_detail_config,
-                       load_sample_config, load_sample_data)
 from elasticsearch import Elasticsearch
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, Request
 from fastapi_elasticsearch import ElasticsearchAPIQueryBuilder
-from fastapi_elasticsearch.utils import wait_elasticsearch
 from response import (ElasticsearchHitBaseModel, ElasticsearchInnerHit,
                       ElasticsearchModelConverter, ElasticsearchResponseModel)
 from starlette.responses import JSONResponse
 
+from .loaddata import (create_sample_index, load_detail_config,
+                       load_sample_config, load_sample_data)
+from .start_up import index_name
+
 conf = get_config()
 
-index_name = "sample-data"
 router = APIRouter()
 
-es_client = get_client()
-
 auth_header = get_admin_auth_header()
-
-
-@router.on_event("startup")
-async def startup_event():
-    wait_elasticsearch(es_client, headers=auth_header)
-    if not es_client.indices.exists(index_name, headers=auth_header):
-        logging.info(f"Index {index_name} not found. Creating one.")
-        create_sample_index(es_client, index_name, headers=auth_header)
-        load_sample_data(es_client, index_name,
-                         num_docs=30, headers=auth_header)
-        load_sample_config(es_client,
-                        index_name=conf.get_string("search-config.index-name"),
-                        headers=auth_header)
-        load_detail_config(es_client,
-                        index_name=conf.get_string("detail-config.index-name"),
-                        headers=auth_header)
 
 
 class SampleBaseHitModel(ElasticsearchHitBaseModel):
@@ -48,11 +30,6 @@ class SampleBaseHitModel(ElasticsearchHitBaseModel):
 class SampleHitModel(SampleBaseHitModel):
     content_first_fragment: str
     content: ElasticsearchInnerHit[str] = []
-
-
-@router.on_event("shutdown")
-def shutdown_event():
-    es_client.close()
 
 
 query_builder = ElasticsearchAPIQueryBuilder()

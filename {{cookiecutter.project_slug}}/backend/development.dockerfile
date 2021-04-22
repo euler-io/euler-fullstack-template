@@ -1,4 +1,4 @@
-FROM python:latest
+FROM python:3.8-slim-buster
 
 COPY ./app/requirements.txt .
 RUN pip3 install --upgrade pip \

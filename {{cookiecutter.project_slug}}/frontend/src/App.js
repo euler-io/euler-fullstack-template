@@ -1,5 +1,5 @@
 import React from "react";
-import "fontsource-roboto";
+import "@fontsource/roboto";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import { AppLayout } from "euler-search-components";
