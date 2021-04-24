@@ -13,8 +13,8 @@ def wait_cluster_available():
     es_client = start()
     es_client.cluster.health(
         headers=auth_header,
-        wait_for_status='green',
-        request_timeout=60)
+        wait_for_status='yellow',
+        request_timeout=240)
 
 
 def wait_elasticsearch(interval=2000,

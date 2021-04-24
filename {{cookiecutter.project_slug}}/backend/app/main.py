@@ -15,13 +15,11 @@ from slowapi.util import get_remote_address
 
 conf = get_config()
 
-base_url = conf.get_string("base-url")
+root_path = conf.get_string("root-path")
 
 app = FastAPI(
     title=conf.get_string("title"),
-    openapi_url=f"{base_url}/openapi.json",
-    docs_url=f"{base_url}/docs",
-    redoc_url=f"{base_url}/redoc"
+    root_path=root_path,
 )
 
 app.include_router(api.router)

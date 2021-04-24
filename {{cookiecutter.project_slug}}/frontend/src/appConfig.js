@@ -18,7 +18,7 @@ const getUrl = (url, baseURL) => {
 };
 
 const baseApiURL = getEnv("REACT_APP_BASE_API_URL", "");
-const baseURL = getEnv("REACT_APP_BASE_URL", "");
+const baseURL = getEnv("PUBLIC_URL", "");
 const authURL = getEnv("REACT_APP_AUTH_URL", "/token");
 const loginURL = getEnv("REACT_APP_LOGIN_URL", "/login");
 

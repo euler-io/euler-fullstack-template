@@ -15,6 +15,7 @@ const PrivateRoute = ({ component: Component, auth, children, ...rest }) => {
     }
     const state = { referrer: next };
     const search = `?${qs.stringify({ next })}`;
+    console.info(`User not logged in. Redirecting to ${auth.params.loginURL}.`);
     const to = {
       pathname: auth.params.loginURL,
       search: search,

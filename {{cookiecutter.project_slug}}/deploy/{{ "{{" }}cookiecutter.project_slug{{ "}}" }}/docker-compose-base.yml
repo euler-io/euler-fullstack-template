@@ -33,10 +33,10 @@ services:
  search-ui:
   image: {{ cookiecutter.docker_image_search_ui }}
   environment:
-   REACT_APP_BASE_URL: "{{ cookiecutter.public_url }}/search/app"
+   REACT_APP_COOKIE_PATH: "/search/app"
+   REACT_APP_AUTH_URL: "{{ cookiecutter.public_url }}/search/api/token"
+   REACT_APP_LOGIN_URL: "/search/app/login"
    REACT_APP_BASE_API_URL: "{{ cookiecutter.public_url }}/search/api"
-   REACT_APP_AUTH_URL: "/token"
-   REACT_APP_LOGIN_URL: "/login"
    PUBLIC_URL: "{{ cookiecutter.public_url }}/search/app"
    SERVER_NAME: {{ cookiecutter.server_name }}
   secrets:
