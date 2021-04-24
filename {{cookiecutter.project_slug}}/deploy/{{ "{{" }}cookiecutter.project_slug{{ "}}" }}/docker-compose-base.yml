@@ -36,6 +36,7 @@ services:
    REACT_APP_COOKIE_PATH: "/search/app"
    REACT_APP_AUTH_URL: "{{ cookiecutter.public_url }}/search/api/token"
    REACT_APP_LOGIN_URL: "/search/app/login"
+   REACT_APP_BASE_PATH: "/search/app"
    REACT_APP_BASE_API_URL: "{{ cookiecutter.public_url }}/search/api"
    PUBLIC_URL: "{{ cookiecutter.public_url }}/search/app"
    SERVER_NAME: {{ cookiecutter.server_name }}

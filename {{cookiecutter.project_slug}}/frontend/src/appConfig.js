@@ -9,25 +9,14 @@ const getEnv = (prop, envDefault) => {
   }
 };
 
-const getUrl = (url, baseURL) => {
-  if (/^https?/.test(url)) {
-    return url;
-  } else {
-    return `${baseURL}${url}`;
-  }
-};
-
 const baseApiURL = getEnv("REACT_APP_BASE_API_URL", "");
-const baseURL = getEnv("PUBLIC_URL", "");
-const authURL = getEnv("REACT_APP_AUTH_URL", "/token");
-const loginURL = getEnv("REACT_APP_LOGIN_URL", "/login");
 
 const config = {
-  baseApiURL: baseApiURL,
-  authURL: getUrl(authURL, baseApiURL),
-  baseURL: baseURL,
-  loginURL: getUrl(loginURL, baseURL),
   cookiePath: getEnv("REACT_APP_COOKIE_PATH", "/"),
+  authURL: getEnv("REACT_APP_AUTH_URL", "/token"),
+  loginURL: getEnv("REACT_APP_LOGIN_URL", "/login"),
+  basePath: getEnv("REACT_APP_BASE_PATH", ""),
+  baseApiURL: baseApiURL,
 };
 
 axios.defaults.baseURL = baseApiURL;

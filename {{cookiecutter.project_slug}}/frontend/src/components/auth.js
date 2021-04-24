@@ -19,7 +19,17 @@ class AuthService {
   }
 
   init() {
-    console.info("Initiliazing AuthService.");
+    const { loginURL, basePath } = this.params;
+    console.info(
+      "loginURL.startsWith(basePath)",
+      loginURL.startsWith(basePath)
+    );
+    if (loginURL.startsWith(basePath)) {
+      const noBaseURL = loginURL.replace(basePath, "");
+      console.info(`Using ${noBaseURL} instead of ${loginURL}`);
+      this.params = { ...this.params, loginURL: noBaseURL };
+    }
+    console.info("Initiliazing AuthService.", this.params);
     this.setInterceptors();
     this.handleAuthentication();
   }

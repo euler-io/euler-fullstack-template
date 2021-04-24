@@ -22,19 +22,28 @@ import {
 
 const theme = createMuiTheme();
 
-const App = () => {
+const useAuth = () => {
   const history = useHistory();
   const auth = new AuthService(history, config);
   auth.init();
+  return auth;
+};
+
+const App = () => {
+  const auth = useAuth();
   return (
     <ThemeProvider theme={theme}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Router>
+        <Router basename={config.basePath}>
           <AppLayout
             title="{{cookiecutter.project_name}}"
             menu={<AppMenu />}
             leftMenu={
-              <AuthMenu auth={auth} next={config.baseURL} login="/login" />
+              <AuthMenu
+                auth={auth}
+                next={config.basePath}
+                login={config.loginURL}
+              />
             }
           >
             <Switch>
@@ -42,7 +51,10 @@ const App = () => {
                 <div>Home</div>
               </Route>
               <Route exact path="/login">
-                <LoginPage auth={auth} title="Base Project Login" />
+                <LoginPage
+                  auth={auth}
+                  title="{{cookiecutter.project_name}} Login"
+                />
               </Route>
               <PrivateRoute auth={auth} exact path="/search/:searchId">
                 <SearchPage />

@@ -6,6 +6,7 @@ RUN yarn install
 RUN REACT_APP_COOKIE_PATH=__REACT_APP_COOKIE_PATH_VAR__ \
 	REACT_APP_AUTH_URL=__REACT_APP_AUTH_URL_VAR__ \
 	REACT_APP_LOGIN_URL=__REACT_APP_LOGIN_URL_VAR__ \
+	REACT_APP_BASE_PATH=__REACT_APP_BASE_PATH_VAR__ \
 	REACT_APP_BASE_API_URL=__REACT_APP_BASE_API_URL_VAR__ \
 	PUBLIC_URL=__PUBLIC_URL_VAR__ \
 	yarn build
@@ -15,6 +16,7 @@ FROM nginx:1.19-alpine
 ENV REACT_APP_COOKIE_PATH="/"
 ENV REACT_APP_AUTH_URL="/token"
 ENV REACT_APP_LOGIN_URL="/login"
+ENV REACT_APP_BASE_PATH="/"
 ENV REACT_APP_BASE_API_URL="http://localhost:8081/api"
 ENV PUBLIC_URL="http://localhost"
 ENV SERVER_NAME="localhost"
@@ -33,6 +35,7 @@ CMD rm -rf /etc/nginx/conf.d/default.conf \
 	&& grep -rl __REACT_APP_COOKIE_PATH_VAR__ /usr/share/nginx/html | xargs sed -i "s#__REACT_APP_COOKIE_PATH_VAR__#$REACT_APP_COOKIE_PATH#g" \
 	&& grep -rl __REACT_APP_AUTH_URL_VAR__ /usr/share/nginx/html | xargs sed -i "s#__REACT_APP_AUTH_URL_VAR__#$REACT_APP_AUTH_URL#g" \
 	&& grep -rl __REACT_APP_LOGIN_URL_VAR__ /usr/share/nginx/html | xargs sed -i "s#__REACT_APP_LOGIN_URL_VAR__#$REACT_APP_LOGIN_URL#g" \
+	&& grep -rl __REACT_APP_BASE_PATH_VAR__ /usr/share/nginx/html | xargs sed -i "s#__REACT_APP_BASE_PATH_VAR__#$REACT_APP_BASE_PATH#g" \
 	&& grep -rl __REACT_APP_BASE_API_URL_VAR__ /usr/share/nginx/html | xargs sed -i "s#__REACT_APP_BASE_API_URL_VAR__#$REACT_APP_BASE_API_URL#g" \
 	&& grep -rl __PUBLIC_URL_VAR__ /usr/share/nginx/html | xargs sed -i "s#__PUBLIC_URL_VAR__#$PUBLIC_URL#g" \
 	&& nginx -g 'daemon off;'
