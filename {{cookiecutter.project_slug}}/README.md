@@ -30,8 +30,8 @@ After the logs stopped rolling the following must be running:
 
 * FastAPI docs at https://<server-name\>/search/api/docs
 * FastAPI redocs at https://<server-name\>/search/api/redoc
-* Kibana at https://<server-name\>/kibana (User/Pass: admin/admin)
-* Search UI at https://<server-name\>/search/app (User/Pass: admin/admin)
+* Kibana at https://<server-name\>/kibana
+* Search UI at https://<server-name\>/search/app
 
 
 ## Requirements
