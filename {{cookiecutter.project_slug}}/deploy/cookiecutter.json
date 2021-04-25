@@ -21,9 +21,9 @@
 
   "jwt_secret": "random",
 
-  "admin_password": "changethis",
-  "apiadmin_password": "changethis",
-  "kibana_password": "changethis",
+  "admin_password": "random",
+  "apiadmin_password": "random",
+  "kibana_password": "random",
 
   "_extensions": [
     "jinja2_base64_filters.Base64Filters",
