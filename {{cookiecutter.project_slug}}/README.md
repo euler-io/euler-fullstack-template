@@ -17,11 +17,21 @@ After the logs stopped rolling the following must be running:
 
 ## Deploy
 
-Go to the directory deploy and run:
+Go to the deploy directory and run:
 ```bash
-./deploy.sh <deploy files output directory>
+./deploy.sh <deployment files output directory>
 ```
 
+To start the deployment stack go to the output directory and run:
+```bash
+docker stack deploy -c docker-compose.yml {{ cookiecutter.project_slug }}
+```
+After the logs stopped rolling the following must be running:
+
+* FastAPI docs at https://<server-name\>/search/api/docs
+* FastAPI redocs at https://<server-name\>/search/api/redoc
+* Kibana at https://<server-name\>/kibana (User/Pass: admin/admin)
+* Search UI at https://<server-name\>/search/app (User/Pass: admin/admin)
 
 
 ## Requirements
