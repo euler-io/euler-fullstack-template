@@ -15,6 +15,15 @@ After the logs stopped rolling the following must be running:
 * Kibana at http://localhost:5601 (User/Pass: admin/admin)
 * Search UI at http://localhost:3000 (User/Pass: admin/admin)
 
+## Deploy
+
+Go to the directory deploy and run:
+```bash
+./deploy.sh <deploy files output directory>
+```
+
+
+
 ## Requirements
 
 * Docker
