@@ -17,7 +17,6 @@ echo "Generated admin password '{{ cookiecutter.admin_password }}'."
 #{% endif %}
 
 echo "Generated apiadmin password '{{ cookiecutter.apiadmin_password }}'."
-{% endraw %}
 
 #{% if cookiecutter.kibana_password == "random" %}
 #{{ cookiecutter.update({"kibana_password": random_ascii_string(12) }) }}
