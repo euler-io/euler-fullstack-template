@@ -1,6 +1,6 @@
 # {{cookiecutter.project_name}}
 
-## How to start the development enviroment
+## How to start the development environment
 
 Go to the root of your project and run:
 ```bash
