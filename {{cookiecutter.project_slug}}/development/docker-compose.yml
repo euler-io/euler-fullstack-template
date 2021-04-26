@@ -64,5 +64,16 @@ services:
    - ./development/certificates/root-ca.pem:/usr/share/kibana/config/root-ca.pem:ro
   depends_on:
    - elastic-dev
+ euler-dev:
+  image: eulerio/euler-api-opendistro-extended:latest
+  ports:
+   - 8080:8080
+  environment:
+   JAVA_OPTS: "-Dconfig.file=/euler/euler.conf"
+  volumes:
+   - ~:/user-home:ro
+   - ./development/certificates/root-ca.pem:/euler/root-ca.pem:ro
+   - ./development/euler.conf:/euler/euler.conf:ro
+   
 volumes:
  base-project-es-data-dev:

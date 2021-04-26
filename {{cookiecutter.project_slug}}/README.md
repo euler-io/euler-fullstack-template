@@ -14,6 +14,7 @@ After the logs stopped rolling the following must be running:
 * Elasticsearch at https://localhost:9200 (User/Pass: admin/admin with self-signed certificate)
 * Kibana at http://localhost:5601 (User/Pass: admin/admin)
 * Search UI at http://localhost:3000 (User/Pass: admin/admin)
+* Euler API at http://localhost:8080 (User/Pass: admin/admin)
 
 ## Deploy
 
