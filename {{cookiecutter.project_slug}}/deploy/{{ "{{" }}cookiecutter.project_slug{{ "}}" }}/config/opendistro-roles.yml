@@ -38,7 +38,7 @@ alerting_full_access:
       allowed_actions:
         - crud 
 
-# Euler admin role
+# API admin role
 api-admin:
   reserved: true
   index_permissions:
