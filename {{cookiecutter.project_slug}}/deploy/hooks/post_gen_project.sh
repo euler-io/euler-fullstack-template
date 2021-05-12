@@ -71,6 +71,11 @@ if [ "true" = "{{ cookiecutter.generate_deploy_certificates | lower }}" ]; then
     echo "##############################################################"
     generate_certificate frontend {{ cookiecutter.server_name }}
 
+    echo "##############################################################"
+    echo "#                     Generate Euler Cert                 #"
+    echo "##############################################################"
+    generate_certificate euler euler
+
     rm -rf ${OUTPUT}/certificates/.rnd
 
     echo "Certificates generated at \"$(readlink -f ${OUTPUT}/certificates)\"."

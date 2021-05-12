@@ -38,7 +38,7 @@ alerting_full_access:
       allowed_actions:
         - crud 
 
-# Iped admin role
+# Euler admin role
 api-admin:
   reserved: true
   index_permissions:
@@ -46,6 +46,19 @@ api-admin:
       - "search-config"
       - "detail-config"
       - "sample-data"
+      allowed_actions:
+        - indices_all
+        - "indices:data/read/scroll/clear"
+  cluster_permissions:
+    - "cluster:monitor/main"
+    - "cluster:monitor/health"
+
+euler-admin:
+  reserved: true
+  index_permissions:
+    - index_patterns:
+      - "euler-jobs"
+      - "euler-templates"
       allowed_actions:
         - indices_all
         - "indices:data/read/scroll/clear"

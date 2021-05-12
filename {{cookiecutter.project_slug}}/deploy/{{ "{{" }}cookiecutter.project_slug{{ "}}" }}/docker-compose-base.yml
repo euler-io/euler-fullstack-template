@@ -198,6 +198,47 @@ services:
   networks:
    - backend
 {% endfor %}
+ euler:
+  image: {{ cookiecutter.docker_image_euler }}
+  environment:
+   JAVA_OPTS: "-Dconfig.file=/app/euler.conf -Dspring.config.location=/app/euler.properties"
+  secrets:
+   - source: euler.conf
+     target: /app/euler.conf
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: euler.properties
+     target: /app/euler.properties
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: euler-key.pem
+     target: /app/certs/cert-key.pem
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: euler.pem
+     target: /app/certs/cert.pem
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: euler.p12
+     target: /app/certs/cert.p12
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+   - source: root-ca.pem
+     target: /app/certs/root-ca.pem
+     mode: 0400
+     uid: '1100'
+     gid: '1100'
+  depends_on:{% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}
+   - elastic-{{ i }}
+{% endfor %}
+  networks:
+   - frontend
+   - backend
 
 secrets:
  nginx_proxy.conf:
@@ -246,6 +287,16 @@ secrets:
  node{{ i }}.pem:
   file: ./certificates/node{{ i }}.pem
 {% endfor %}
+ euler.conf:
+  file: ./config/euler.conf
+ euler.properties:
+  file: ./config/euler.properties
+ euler.p12:
+  file: ./certificates/euler.p12
+ euler.pem:
+  file: ./certificates/euler.pem
+ euler-key.pem:
+  file: ./certificates/euler-key.pem
 
 volumes:
 {% for i in range(1, cookiecutter.elastic_nodes | int + 1) %}

@@ -51,6 +51,11 @@ api-admin:
   backend_roles:
     - "api-admin"
 
+euler-admin:
+  reserved: true
+  backend_roles:
+    - "euler-admin"
+
 search_master:
   reserved: false
   users:

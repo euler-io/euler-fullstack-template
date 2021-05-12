@@ -21,6 +21,7 @@ apiadmin:
   reserved: true
   backend_roles:
   - "api-admin"
+  - "euler-admin"
   description: "API admin user"
 
 kibanaserver:

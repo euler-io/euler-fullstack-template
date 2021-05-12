@@ -9,6 +9,7 @@
  
   "docker_image_search_api": "{{ cookiecutter.project_slug }}-search-api:latest",
   "docker_image_search_ui": "{{ cookiecutter.project_slug }}-search-ui:latest",
+  "docker_image_euler": "eulerio/euler-api-opendistro-extended:0.7.5",
  
   "generate_deploy_certificates": [true, false],
   "certificates_expiration_in_days": 365,
