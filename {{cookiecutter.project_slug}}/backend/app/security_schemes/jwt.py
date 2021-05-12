@@ -98,8 +98,7 @@ rate_limit = app_config.get_string("rate-limits.login")
 
 @router.post("/token", response_model=Token)
 @limiter.limit(rate_limit)
-async def login_for_access_token(request: Request,
-                                 form_data: UserPasswordForm = Depends(),
+async def login_for_access_token(form_data: UserPasswordForm = Depends(),
                                  client: OpenDistro = Depends(get_client)
                                  ) -> JSONResponse:
     user = authenticate_user(client, form_data.username, form_data.password)
