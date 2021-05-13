@@ -65,7 +65,7 @@ services:
   depends_on:
    - elastic-dev
  euler-dev:
-  image: eulerio/euler-api-opendistro-extended:0.6.1
+  image: eulerio/euler-api-opendistro-extended:latest
   ports:
    - 8080:8080
   environment:

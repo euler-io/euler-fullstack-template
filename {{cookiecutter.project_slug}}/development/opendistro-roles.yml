@@ -38,12 +38,13 @@ alerting_full_access:
       allowed_actions:
         - crud 
 
-# Iped admin role
+# Euler admin role
 euler-admin:
   reserved: false
   index_permissions:
     - index_patterns:
       - "euler-job"
+      - "euler-templates"
       allowed_actions:
         - indices_all
   cluster_permissions:

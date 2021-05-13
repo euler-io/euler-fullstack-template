@@ -1,9 +1,9 @@
 from config.utils import get_config
-from fastapi import APIRouter, Path, Query, Depends, HTTPException, Optional
+from fastapi import APIRouter, Path, Query, Depends, HTTPException
 from config.security import get_auth_header
 from fastapi_elasticsearch import ElasticsearchAPIQueryBuilder
 from starlette.responses import FileResponse, JSONResponse
-from typing import Dict
+from typing import Dict, Optional
 from preview_generator.manager import PreviewManager
 from elasticsearch import Elasticsearch
 from client import get_client
@@ -54,12 +54,20 @@ async def preview(
     )
     if resp["hits"]["total"]["value"] > 0:
         document_path = resp["hits"]["hits"][0]["_source"][path_property]
-        path_to_preview_image = manager.get_jpeg_preview(document_path,
-                                                         page=page,
-                                                         width=width,
-                                                         height=height,
-                                                         )
-        return FileResponse(path_to_preview_image)
+        supported = manager.has_jpeg_preview(document_path)
+        pages = manager.get_page_nb(document_path)
+        if supported and page < pages:
+            path_to_preview_image = manager.get_jpeg_preview(document_path,
+                                                             page=page,
+                                                             width=width,
+                                                             height=height,
+                                                             )
+            return FileResponse(path_to_preview_image)
+        elif not supported:
+            return HTTPException(status_code=400, detail="Preview not supported.")
+        elif page > pages:
+            return HTTPException(status_code=400, detail=f"Page {page} not available.")
+
     else:
         raise HTTPException(status_code=404, detail="Document not found")
 
