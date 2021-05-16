@@ -8,6 +8,7 @@ services:
   volumes:
    - .:/src
    - ./development/certificates/root-ca.pem:/euler/root-ca.pem:ro
+   - ~:/user-home:ro
   user: ${CURRENT_UID}:${CURRENT_GID}
   environment:
    - LANG=C.UTF-8

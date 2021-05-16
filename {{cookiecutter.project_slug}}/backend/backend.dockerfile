@@ -15,7 +15,8 @@ RUN apt-get update \
          libimage-exiftool-perl \
          ufraw-batch \
          ffmpeg \
-         libreoffice
+         libreoffice \
+         libmagic1
 
 COPY ./app /app
 RUN pip install -r /app/requirements.txt \
