@@ -2,7 +2,6 @@ import logging
 from typing import Dict
 
 from client import get_client
-from start_client import start
 from config.security import get_auth_header
 from config.utils import get_admin_auth_header, get_config
 from elasticsearch import Elasticsearch
@@ -12,6 +11,7 @@ from pydantic import BaseModel
 from response import (ElasticsearchHitBaseModel, ElasticsearchModelConverter,
                       ElasticsearchResponseModel)
 from starlette.responses import JSONResponse
+from start_client import start
 
 conf = get_config()
 index_name = conf.get_string("search-config.index-name")

@@ -1,7 +1,7 @@
 import logging
 
-from start_client import start
 from config.utils import get_admin_auth_header, get_config
+from start_client import start
 
 from .loaddata import (create_sample_index, load_detail_config,
                        load_sample_config, load_sample_data)

@@ -1,5 +1,6 @@
-from jinja2.ext import Extension
 import bcrypt
+from jinja2.ext import Extension
+
 
 class BCryptExtension(Extension):
     """Jinja2 extension to hash using bcrypt algo."""

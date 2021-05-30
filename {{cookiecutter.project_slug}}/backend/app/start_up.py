@@ -1,10 +1,11 @@
+import logging
+import time
+
 from api.detail_config import start_up as detail_config_start_up
 from api.sample import start_up as sample_start_up
 from api.search_config import start_up as search_config_start_up
-from start_client import start
 from config.utils import get_admin_auth_header
-import logging
-import time
+from start_client import start
 
 
 def wait_cluster_available():
